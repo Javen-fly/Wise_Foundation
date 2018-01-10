@@ -1,13 +1,12 @@
 # Wise_Foundation
 APP 基础开发框架
+		使用Rxjava+Dargger2+Retrofit主流框架搭建的快速开发框架，定期维护更新。
+		
 
-使用简单的方式进行搜索、连接、读写、通知的订阅与取消等一系列蓝牙操作，并实时地得到操作反馈。
+# 版本
+	1.0.0
 
-
-# Preview
-	
-
-# Download
+# 依赖
 	Gradle:
 
 	compile 'xxx'
