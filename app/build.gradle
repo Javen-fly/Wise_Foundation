@@ -1,0 +1,191 @@
+apply plugin: 'com.android.application'
+
+android {
+
+    compileSdkVersion rootProject.ext.android.compileSdkVersion
+    buildToolsVersion rootProject.ext.android.buildToolsVersion
+
+    defaultConfig {
+        applicationId rootProject.ext.android.applicationId
+        minSdkVersion rootProject.ext.android.minSdkVersion
+        targetSdkVersion rootProject.ext.android.targetSdkVersion
+        versionCode rootProject.ext.android.versionCode
+        versionName rootProject.ext.android.versionName
+
+        flavorDimensions "versionCode"
+        //添加如下配置就OK了
+        javaCompileOptions { annotationProcessorOptions { includeCompileClasspath = true } }
+    }
+    buildTypes {
+        debug {
+            debuggable true
+            jniDebuggable true
+            zipAlignEnabled true
+            minifyEnabled false
+            shrinkResources false
+//            signingConfig signingConfigs.debug
+        }
+        release {
+            debuggable false
+            jniDebuggable false
+            zipAlignEnabled true
+            minifyEnabled false
+            shrinkResources false
+//            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+////签名
+//    signingConfigs {
+//        debug {
+//            storeFile file(RELEASE_STORE_FILE)
+//            keyAlias RELEASE_KEY_ALIAS
+//            storePassword RELEASE_KEY_PASSWORD
+//            keyPassword RELEASE_STORE_PASSWORD
+//        }
+//        release {
+//            storeFile file(RELEASE_STORE_FILE)
+//            keyAlias RELEASE_KEY_ALIAS
+//            storePassword RELEASE_KEY_PASSWORD
+//            keyPassword RELEASE_STORE_PASSWORD
+//        }
+//    }
+
+
+    sourceSets {
+        development.setRoot('build-types/Development')
+        baidu.setRoot('build-types/Baidu')
+        m360.setRoot('build-types/M360')
+        tencent.setRoot('build-types/Tencent')
+        wandoujia.setRoot('build-types/Wandoujia')
+        xiaomi.setRoot('build-types/Xiaomi')
+        huawei.setRoot('build-types/Huawei')
+        lenove.setRoot('build-types/Lenove')
+        googleplay.setRoot('build-types/Googleplay')
+    }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/dependencies.txt'
+        exclude 'META-INF/LGPL2.1'
+        exclude 'LICENSE.txt'
+        exclude 'org/apache/http/version.properties'
+        exclude 'org/apache/http/entity/mime/version.properties'
+        exclude 'META-INF/services/javax.annotation.processing.Processor'
+    }
+
+    //渠道
+    productFlavors {
+        development {}// 开发版
+        baidu {}
+        m360 {}
+        tencent {}
+        wandoujia {}
+        xiaomi {}
+        huawei {}
+        lenove {}
+        googleplay {}
+    }
+
+    variantFilter { variant ->
+        def buildType = variant.buildType.name
+        def flavorName = variant.getFlavors().get(0).name
+        // 根据构建类型，自动过滤渠道
+        if (buildType.equals('debug')) {
+            if (flavorName.equals('development')) {
+                variant.setIgnore(false)
+            } else {
+                variant.setIgnore(true)
+            }
+        } else {
+            if (flavorName.equals('development')) {
+                variant.setIgnore(true)
+            } else {
+                variant.setIgnore(false)
+            }
+        }
+    }
+
+    //修改生成的最终文件名
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            if (!variant.buildType.isDebuggable()) {
+                //获取签名的名字 variant.signingConfig.name
+                //要被替换的源字符串
+                def sourceFile = "-${variant.flavorName}-${variant.buildType.name}"
+                //替换的字符串
+                def replaceFile = "_V${variant.versionName}_${variant.flavorName}_${variant.buildType.name}_${packageTime()}"
+                outputFileName = output.outputFile.name.replace(sourceFile, replaceFile);
+                //遗留问题：如何获取当前module的name，如CodeBooke这个名字怎么获取到
+            }
+        }
+
+    }
+
+    lintOptions {
+        disable 'InvalidPackage'
+        abortOnError false
+        ignoreWarnings true
+        warningsAsErrors false
+    }
+
+    dexOptions {
+//        incremental true
+        preDexLibraries = false
+        javaMaxHeapSize "1536M"
+    }
+}
+
+dependencies {
+
+    //auto
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    testCompile 'junit:junit:4.12'
+    //base
+    compile rootProject.ext.dependencies["appcompat-v7"]
+    compile rootProject.ext.dependencies["design"]
+    compile rootProject.ext.dependencies["recyclerview-v7"]
+    compile rootProject.ext.dependencies["cardview-v7"]
+    //rx
+    compile rootProject.ext.dependencies["rxjava"]
+    compile rootProject.ext.dependencies["rxandroid"]
+    compile rootProject.ext.dependencies["rxpermissions"]
+    //network
+    compile rootProject.ext.dependencies["gson"]
+    compile rootProject.ext.dependencies["retrofit"]
+    compile rootProject.ext.dependencies["retrofit-converter-gson"]
+    compile rootProject.ext.dependencies["retrofit-adapter-rxjava2"]
+    compile rootProject.ext.dependencies["okhttp"]
+    compile rootProject.ext.dependencies["okhttp-logging-interceptor"]
+    compile rootProject.ext.dependencies["glide"]
+    compile rootProject.ext.dependencies["glide-okhttp3-integration"]
+    compile rootProject.ext.dependencies["jsoup"]
+    //di
+    compile rootProject.ext.dependencies["dagger"]
+    compile rootProject.ext.dependencies["dagger-compiler"]
+    compile rootProject.ext.dependencies["butterknife"]
+    annotationProcessor rootProject.ext.dependencies["butterknife-compiler"]
+    provided rootProject.ext.dependencies["annotation"]
+    //fragmentation
+    compile rootProject.ext.dependencies["fragmentation"]
+
+    compile 'com.kehua:utils_master:1.0.1'
+    compile 'com.kehua:ui_master:1.0.4'
+}
+
+//定义打包时间函数
+def packageTime() {
+    return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
+}
