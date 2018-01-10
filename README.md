@@ -6,8 +6,8 @@ APP 基础开发框架
 	1.0.0
 	
 # 框架介绍
-
-
+![base](https://github.com/Walten55/Wise_Foundation/blob/master/images/base.png) 
+	
 # 如何使用
 	*直接拷贝*
 
