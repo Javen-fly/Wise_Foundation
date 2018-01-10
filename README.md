@@ -1,5 +1,19 @@
-APP 开发框架 Wise_Foundation
-===================================      
-    采用RxJava+Dagger2+Retrofit主流框架搭建   
-    
-    感谢 厦门科华恒盛恒盛资深Android工程师-陈树雄参与维护
+# Wise_Foundation
+APP 基础开发框架
+
+使用简单的方式进行搜索、连接、读写、通知的订阅与取消等一系列蓝牙操作，并实时地得到操作反馈。
+
+
+# Preview
+	
+
+# Download
+	Gradle:
+
+	compile 'xxx'
+
+# 如何使用
+
+
+# 维护人员
+	   Walten55 and csxiong
