@@ -1,3 +1,5 @@
-# Wise_Foundation APP主体框架
-this this a foundation for any app.
-感谢厦门科华恒盛陈树雄参与维护。
+APP 开发框架 Wise_Foundation
+===================================      
+    采用RxJava+Dagger2+Retrofit主流框架搭建   
+    
+    感谢 厦门科华恒盛恒盛资深Android工程师-陈树雄参与维护
